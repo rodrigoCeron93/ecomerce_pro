@@ -75,8 +75,8 @@ class Productos{
           const contentObj = JSON.parse(content);
           let obj = null;
           obj = contentObj.filter((o) => o.id != id);
-          console.log([].length)
-          await fs.promises.writeFile(this.namefile, JSON.stringify(obj.length!=0?obj:null));
+          
+          await fs.promises.writeFile(this.namefile, obj.length!=0?JSON.stringify(obj):"");
           return 1
         }
       } catch (error) {

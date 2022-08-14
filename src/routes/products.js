@@ -43,7 +43,7 @@ router.put("/productos/:id", async (req, res) => {
     obj.timestamp = Date.now()
     const result = await producto.updateById(id, obj);
     response!=null?res.status(201).send():res.status(500).send()
-    res.send({ result: result }).status(201);
+    // res.send({ result: result }).status(201);
   } else {
     res.status(401).send({ error : -1, descripcion: "ruta /productos/:id  método 'put' no autorizada" });
   }

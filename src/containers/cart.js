@@ -42,6 +42,7 @@ class Carrito{
     }
 
     async save(obj) {
+      console.log("hgsakjdlhjasklhdj")
       try {
         let content = await fs.promises.readFile(this.namefile, "utf8");
         console.log(  content != "")
@@ -54,6 +55,7 @@ class Carrito{
           await fs.promises.writeFile(this.namefile, JSON.stringify(contentObj));
           return obj;
         } else {
+          console.log("hola")
           obj.id = 0;
           await fs.promises.appendFile(this.namefile, JSON.stringify([obj]));
           return obj;
@@ -73,13 +75,12 @@ class Carrito{
             let contentObj = JSON.parse(content);
             let objt = null;
             objt = contentObj.filter((o) => o.id == id);
-
-            this.updateById( id,objt[0].productos.concat(obj))
-          
-           
-         
-           
-            return obj;
+       
+            objt[0].productos =objt[0].productos?objt[0].productos.concat(obj):[obj]
+     
+            await this.deleteById(id)
+            await fs.promises.writeFile(this.namefile, JSON.stringify(contentObj));
+            return objt;
           } else {
             
             return null;
@@ -97,8 +98,7 @@ class Carrito{
           const contentObj = JSON.parse(content);
           let obj = null;
           obj = contentObj.filter((o) => o.id != id);
-          console.log([].length)
-          await fs.promises.writeFile(this.namefile, JSON.stringify(obj.length!=0?obj:null));
+          await fs.promises.writeFile(this.namefile, obj.length!=0?JSON.stringify(obj):"");
           return 1
         }
       } catch (error) {
@@ -107,15 +107,20 @@ class Carrito{
       }
     }
 
-    async updateById(id,obj) {
-      await this.deleteById(id)
+    async deleteProductsById(id,idproduct) {
       try {
           let content = await fs.promises.readFile(this.namefile, "utf8");
-          let contentObj = JSON.parse(content);
-          console.log(content)
-          obj.id = id;
-          contentObj.push(obj);
-          await fs.promises.writeFile(this.namefile, JSON.stringify(contentObj));
+          let contentObj = content!==""?JSON.parse(content):[]
+      
+          let obj = null;
+          obj = contentObj.filter((o) => o.id == id);
+          let product = obj[0].productos.filter((o) => o.id != idproduct);
+          console.log(product)
+
+          obj[0].productos = product
+
+          
+         await fs.promises.writeFile(this.namefile, JSON.stringify(contentObj));
           return 1;
 
       } catch (error) {
